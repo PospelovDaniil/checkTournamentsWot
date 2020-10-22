@@ -194,9 +194,6 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
 
         self.fillTableAll(self.listHandeledData)
 
-        for item in self.listHandeledData:
-            print(item[0] + " " + item[1])
-
 app = QtWidgets.QApplication([])
 application = TournamentsWotCheck()
 application.show()
