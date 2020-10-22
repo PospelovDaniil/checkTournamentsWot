@@ -91,7 +91,7 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
 
     def req(self, url):
         # Do request and return text getted responce in utf-8
-        user_agent = "Kirill Ignatenko hello ^^ . This is a parser from _TToJIoHuu_210_. vk.com/againuarehere ."
+        user_agent = "Hello, its parser: https://github.com/PospelovDaniil/checkTournamentsWot ."
         headers = {'User-Agent': user_agent}
 
         try:
