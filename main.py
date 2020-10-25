@@ -91,7 +91,7 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
 
     def req(self, url):
         # Do request and return text getted responce in utf-8
-        user_agent = "Hello, this is a parser from _TToJIoHuu_210_"
+        user_agent = "Kirill Ignatenko hello ^^ . This is a parser from _TToJIoHuu_210_. vk.com/againuarehere ."
         headers = {'User-Agent': user_agent}
 
         try:
@@ -140,10 +140,13 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
                     listFinded_RE_Title = re.findall(self.RE_Title, resp)
                     title = listFinded_RE_Title[0]
                     title = title[7:-8]
-                    data = [title, url]
+                    # data = [title, url]
+                    data = {"title": None, "url": None}
+                    data["title"] = title
+                    data["url"] = url
 
                     self.lock.acquire()
-                    self.listHandeledData.append(data)
+                    self.listHandeledData.append(data.copy())
                     self.lock.release()
 
                     listFinded_RE_Title.clear()
@@ -156,16 +159,15 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
 
         counterRow = 0
         for item in listData:
-            it = QTableWidgetItem(item[0])
+            it = QTableWidgetItem(item["title"])
             it.setForeground(QBrush(QColor(245,216,25)))
             self.ui.tableWidget.setItem(counterRow, 0, it)
 
-            it = QTableWidgetItem(item[1])
+            it = QTableWidgetItem(item["url"])
             it.setForeground(QBrush(QColor(174,174,174)))
             self.ui.tableWidget.setItem(counterRow, 1, it)
 
             counterRow += 1
-
 
         # self.ui.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.ui.tableWidget.resizeColumnsToContents()
