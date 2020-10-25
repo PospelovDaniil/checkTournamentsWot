@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
+    <width>820</width>
     <height>375</height>
    </rect>
   </property>
@@ -373,9 +373,9 @@ background-color: rgb(53, 53, 53);
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>190</x>
       <y>20</y>
-      <width>381</width>
+      <width>621</width>
       <height>331</height>
      </rect>
     </property>

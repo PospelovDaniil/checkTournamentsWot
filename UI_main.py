@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'UI_TournamentsWot.ui'
+# Form implementation generated from reading ui file 'UI_TournamentsWotCopy.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(600, 375)
+        MainWindow.resize(820, 375)
         MainWindow.setMinimumSize(QtCore.QSize(600, 375))
         font = QtGui.QFont()
         font.setFamily("Montserrat")
@@ -184,7 +184,7 @@ class Ui_MainWindow(object):
         spacerItem = QtWidgets.QSpacerItem(20, 80, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         self.gridLayout.addItem(spacerItem, 2, 0, 1, 1)
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
-        self.tableWidget.setGeometry(QtCore.QRect(200, 20, 381, 331))
+        self.tableWidget.setGeometry(QtCore.QRect(190, 20, 621, 331))
         font = QtGui.QFont()
         font.setFamily("Montserrat")
         font.setPointSize(10)
