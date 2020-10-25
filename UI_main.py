@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'UI_TournamentsWotCopy.ui'
+# Form implementation generated from reading ui file 'UI_TournamentsWot.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -15,7 +15,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(820, 375)
-        MainWindow.setMinimumSize(QtCore.QSize(600, 375))
+        MainWindow.setMinimumSize(QtCore.QSize(820, 375))
         font = QtGui.QFont()
         font.setFamily("Montserrat")
         font.setPointSize(16)
