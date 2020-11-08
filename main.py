@@ -2,8 +2,10 @@
 import sys
 import threading
 import urllib.request as urlreq
-import re
-import time
+# import re
+# import time
+from bs4 import BeautifulSoup
+
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem, QAbstractItemView, QAbstractScrollArea
@@ -11,7 +13,7 @@ from PyQt5.QtGui import QIcon, QBrush, QColor
 from UI_main import Ui_MainWindow
 
 class TournamentsWotCheck(QtWidgets.QMainWindow):
-    def __init__ (self):
+    def __init__(self):
         super(TournamentsWotCheck, self).__init__()
         # UI
         self.ui = Ui_MainWindow()
@@ -80,7 +82,7 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
 
         i = self.fromSpinBoxVal
         data = ""
-        while i<=self.toSpinBoxVal:
+        while i <= self.toSpinBoxVal:
             data = "https://worldoftanks.ru/ru/tournaments/" + str(i) + "/"
             self.listUrlsTournaments.append(data)
             i += 1
@@ -116,14 +118,20 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
             my_thread = threading.Thread(target=self.worker)
             threads_list.append(my_thread)
         for t in threads_list:
-            t.start()
+            try:
+                t.start()
+            except:
+                print("Error t.start() " + t.getName())
         for t in threads_list:
-            t.join()
+            try:
+                t.join()
+            except:
+                print("Error t.join() " + t.getName())
 
     def worker(self):
         # Once send req and handle getted responce
         while len(self.listUrlsTournaments) > 0:
-            url = ""
+
             self.lock.acquire()
 
             if len(self.listUrlsTournaments) > 0:
@@ -137,30 +145,67 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
                 resp = self.req(url)
 
                 if resp != "FAIL":
-                    listFinded_RE_Title = re.findall(self.RE_Title, resp)
-                    title = listFinded_RE_Title[0]
-                    title = title[7:-8]
+                    # listFinded_RE_Title = re.findall(self.RE_Title, resp)
+                    # title = listFinded_RE_Title[0]
+                    # title = title[7:-8]
                     # data = [title, url]
-                    data = {"title": None, "url": None}
-                    data["title"] = title
-                    data["url"] = url
-
+                    data = {"title": None,
+                            "url": None,
+                            "prize": None,
+                            "confirmed": None,
+                            "server": None}
+                    # data["title"] = title
                     self.lock.acquire()
+                    data["url"] = url
+                    ################################ BeautifulSoup
+                    soup = BeautifulSoup(resp, "html.parser")
+                    # Title
+                    try:
+                        data["title"] = soup.find("span", class_="header-inner_name").get_text(strip=True)
+                    except:
+                        data["title"] = "Error title"
+                    # Prize
+                    try:
+                        data["prize"] = soup.find("span", class_="ico-prize").parent.parent.find("span", class_="tournament-info-list_description").get_text(strip=True)
+                    except:
+                        data["prize"] = "Error prize"
+                    # Confirmed
+                    try:
+                        data["confirmed"] = soup.find("span", class_="ico-confirmed").parent.parent.find("span", class_="tournament-info-list_description").get_text(strip=True)
+                    except:
+                        data["confirmed"] = "Error confirmed"
+                    # Server
+                    try:
+                        data["server"] = soup.find("span", class_="ico-region").parent.parent.find("span", class_="tournament-info-list_description").get_text(strip=True)
+                    except:
+                        data["server"] = "Error server"
+                    
+                    print(data["url"])
+                    print(data["confirmed"])
+
+                    ################################ BeautifulSoup
+
+
                     self.listHandeledData.append(data.copy())
                     self.lock.release()
+            else:
+                self.lock.release()
 
-                    listFinded_RE_Title.clear()
+
+                    # listFinded_RE_Title.clear()
 
     def setOfLabel(self, data):
         self.ui.label_Of.setText(str(data))
 
     def fillTableAll(self, listData: list):
+        print("INSIDE fillTableAll")
         self.ui.tableWidget.setRowCount(int(len(listData)))
 
         counterRow = 0
         for item in listData:
             it = QTableWidgetItem(item["title"])
             it.setForeground(QBrush(QColor(245,216,25)))
+            # it.setBackground(QBrush(QColor(115,26,21)))
             self.ui.tableWidget.setItem(counterRow, 0, it)
 
             it = QTableWidgetItem(item["url"])
@@ -191,8 +236,15 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
 
         # Network handle
         threadRun = threading.Thread(target=self.handleListUrls)
-        threadRun.start()
-        threadRun.join()
+
+        try:
+            threadRun.start()
+        except:
+            print("threadRun error")
+        try:
+            threadRun.join()
+        except:
+            "threadRun error"
 
         self.fillTableAll(self.listHandeledData)
 
