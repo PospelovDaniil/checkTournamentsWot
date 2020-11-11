@@ -3,7 +3,8 @@ import sys
 import threading
 import urllib.request as urlreq
 # import re
-# import time
+import time
+import datetime
 from bs4 import BeautifulSoup
 
 
@@ -57,10 +58,10 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
         self.ui.tableWidget.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.ui.tableWidget.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
 
-        self.ui.tableWidget.setColumnCount(2)
+        self.ui.tableWidget.setColumnCount(6)
         self.ui.tableWidget.setRowCount(0)
 
-        self.ui.tableWidget.setHorizontalHeaderLabels(["Title", "Url"])
+        self.ui.tableWidget.setHorizontalHeaderLabels(["Title", "Prize", "Url", "Data", "Confirmed", "Server"])
         self.ui.tableWidget.setSortingEnabled(True)
 
         # self.ui.tableWidget.resizeColumnsToContents()
@@ -153,7 +154,8 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
                             "url": None,
                             "prize": None,
                             "confirmed": None,
-                            "server": None}
+                            "server": None,
+                            "date_tournament": None}
                     # data["title"] = title
                     self.lock.acquire()
                     data["url"] = url
@@ -167,22 +169,38 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
                     # Prize
                     try:
                         data["prize"] = soup.find("span", class_="ico-prize").parent.parent.find("span", class_="tournament-info-list_description").get_text(strip=True)
+                        if data["prize"] == "Личные резервы (доп. опыт; доп. опыт экипажа; доп. кредиты)":
+                            data["prize"] = "Личные резервы"
                     except:
-                        data["prize"] = "Error prize"
+                        data["prize"] = "None"
                     # Confirmed
                     try:
                         data["confirmed"] = soup.find("span", class_="ico-confirmed").parent.parent.find("span", class_="tournament-info-list_description").get_text(strip=True)
+                        data["confirmed"] = data["confirmed"].replace(' ', '')
                     except:
-                        data["confirmed"] = "Error confirmed"
+                        data["confirmed"] = "None"
                     # Server
                     try:
                         data["server"] = soup.find("span", class_="ico-region").parent.parent.find("span", class_="tournament-info-list_description").get_text(strip=True)
+                        data["server"] = data["server"].replace(' ', '')
+                        data["server"] = data["server"].replace('\n', '')
+                        data["server"] = data["server"].replace('\t', '')
                     except:
-                        data["server"] = "Error server"
-                    
-                    print(data["url"])
-                    print(data["confirmed"])
-
+                        data["server"] = "None"
+                    # Data tournament
+                    try:
+                        timestamp = soup.find("span", class_="header-inner_status js-tournament-schedule")["data-start-date"]
+                        timestampFloat = float(timestamp)
+                        val = datetime.datetime.fromtimestamp(timestampFloat).strftime('%Y.%m.%d %H:%M')
+                        data["date_tournament"] = val
+                    except:
+                        try:
+                            timestamp = soup.find("span", class_="tournament-heading_small js-tournament-schedule")["data-start-date"]
+                            timestampFloat = float(timestamp)
+                            val = datetime.datetime.fromtimestamp(timestampFloat).strftime('%Y.%m.%d %H:%M')
+                            data["date_tournament"] = val
+                        except:
+                            data["date_tournament"] = "None"
                     ################################ BeautifulSoup
 
 
@@ -198,19 +216,34 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
         self.ui.label_Of.setText(str(data))
 
     def fillTableAll(self, listData: list):
-        print("INSIDE fillTableAll")
         self.ui.tableWidget.setRowCount(int(len(listData)))
-
         counterRow = 0
         for item in listData:
+            # Title
             it = QTableWidgetItem(item["title"])
-            it.setForeground(QBrush(QColor(245,216,25)))
+            it.setForeground(QBrush(QColor(230, 230, 230)))
             # it.setBackground(QBrush(QColor(115,26,21)))
             self.ui.tableWidget.setItem(counterRow, 0, it)
-
+            # Prizes
+            it = QTableWidgetItem(item["prize"])
+            it.setForeground(QBrush(QColor(245,216,25)))
+            self.ui.tableWidget.setItem(counterRow, 1, it)
+            # Url
             it = QTableWidgetItem(item["url"])
             it.setForeground(QBrush(QColor(174,174,174)))
-            self.ui.tableWidget.setItem(counterRow, 1, it)
+            self.ui.tableWidget.setItem(counterRow, 2, it)
+            # Data tournament
+            it = QTableWidgetItem(item["date_tournament"])
+            it.setForeground(QBrush(QColor(220, 220, 220)))
+            self.ui.tableWidget.setItem(counterRow, 3, it)
+            # Confirmed
+            it = QTableWidgetItem(item["confirmed"])
+            it.setForeground(QBrush(QColor(46,165,223)))
+            self.ui.tableWidget.setItem(counterRow, 4, it)
+            # Server
+            it = QTableWidgetItem(item["server"])
+            it.setForeground(QBrush(QColor(220, 220, 220)))
+            self.ui.tableWidget.setItem(counterRow, 5, it)
 
             counterRow += 1
 
