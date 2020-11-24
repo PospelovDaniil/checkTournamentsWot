@@ -14,8 +14,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(820, 375)
-        MainWindow.setMinimumSize(QtCore.QSize(820, 375))
+        MainWindow.resize(820, 380)
+        MainWindow.setMinimumSize(QtCore.QSize(820, 380))
         font = QtGui.QFont()
         font.setFamily("Montserrat")
         font.setPointSize(16)
@@ -196,9 +196,43 @@ class Ui_MainWindow(object):
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setRowCount(0)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.menuBar = QtWidgets.QMenuBar(MainWindow)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 820, 22))
+        self.menuBar.setStyleSheet("background-color: #ABABAB;\n"
+"color: rgb(85, 85, 255);\n"
+"font: 75 10pt \"Montserrat\";\n"
+"border-radius: 1px;\n"
+"")
+        self.menuBar.setObjectName("menuBar")
+        self.menu = QtWidgets.QMenu(self.menuBar)
+        font = QtGui.QFont()
+        font.setFamily("Montserrat")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(9)
+        self.menu.setFont(font)
+        self.menu.setAutoFillBackground(False)
+        self.menu.setStyleSheet("QMenu::item{\n"
+" background-color: rgb(170, 170, 255);\n"
+" color: rgb(255, 255, 255);\n"
+" font: 11pt \"MV Boli\";\n"
+"}\n"
+"\n"
+"QMenu::selected{\n"
+"  background-color:rgb(255, 0, 255);\n"
+"}")
+        self.menu.setObjectName("menu")
+        self.menuData_manager = QtWidgets.QMenu(self.menuBar)
+        self.menuData_manager.setObjectName("menuData_manager")
+        MainWindow.setMenuBar(self.menuBar)
+        self.actionData_manager = QtWidgets.QAction(MainWindow)
+        self.actionData_manager.setObjectName("actionData_manager")
+        self.actionDownload_data_all_team_in_tournament = QtWidgets.QAction(MainWindow)
+        self.actionDownload_data_all_team_in_tournament.setObjectName("actionDownload_data_all_team_in_tournament")
+        self.menuData_manager.addAction(self.actionDownload_data_all_team_in_tournament)
+        self.menuBar.addAction(self.menu.menuAction())
+        self.menuBar.addAction(self.menuData_manager.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -212,3 +246,7 @@ class Ui_MainWindow(object):
         self.pushButton_pwned.setText(_translate("MainWindow", "pwned"))
         self.label_Left.setText(_translate("MainWindow", "Left:"))
         self.label_Of.setText(_translate("MainWindow", "210666"))
+        self.menu.setTitle(_translate("MainWindow", "Menu"))
+        self.menuData_manager.setTitle(_translate("MainWindow", "Data manager"))
+        self.actionData_manager.setText(_translate("MainWindow", "Data manager"))
+        self.actionDownload_data_all_team_in_tournament.setText(_translate("MainWindow", "Manager teams in tournament.."))

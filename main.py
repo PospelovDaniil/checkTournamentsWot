@@ -12,14 +12,18 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem, QAbstractItemView, QAbstractScrollArea
 from PyQt5.QtGui import QIcon, QBrush, QColor
 from UI_main import Ui_MainWindow
+from DM_ManagerTeams import DM_ManagerTeams
 
 class TournamentsWotCheck(QtWidgets.QMainWindow):
     def __init__(self):
         super(TournamentsWotCheck, self).__init__()
-        # UI
+        # UI main
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.init_UI()
+
+        # UI Manager Teams
+        self.ui_DM_ManagerTeams = DM_ManagerTeams()
 
         # Objects
         self.leftVal = 0
@@ -35,7 +39,7 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
         self.listHandeledData.clear()
 
         # Re
-        self.RE_Title = r"<title>[\w\d\s\S]*<[\/]title>"
+        # self.RE_Title = r"<title>[\w\d\s\S]*<[\/]title>"
 
     def init_UI(self):
         self.init_connects()
@@ -51,6 +55,12 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
         self.ui.spinBox_Treads.textChanged.connect(self.updateThreads)
         # Button(s)
         self.ui.pushButton_pwned.clicked.connect(self.runButton)
+
+        # Actions
+        self.ui.actionDownload_data_all_team_in_tournament.triggered.connect(self.createDMWindow)
+
+    def createDMWindow(self):
+        self.ui_DM_ManagerTeams.show()
 
     def init_Table(self):
         self.ui.tableWidget.clear()
@@ -218,32 +228,52 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
     def fillTableAll(self, listData: list):
         self.ui.tableWidget.setRowCount(int(len(listData)))
         counterRow = 0
+        # Баг --> по какой-то причине, при повторном запуске скана и заполнении таблицы, повторном, некоторые данные в словаре перестают быть типа str ИЛИ передаваыемые данные в объект изменяют свой тип
         for item in listData:
             # Title
-            it = QTableWidgetItem(item["title"])
+            it = QTableWidgetItem(str(item["title"]))
             it.setForeground(QBrush(QColor(230, 230, 230)))
             # it.setBackground(QBrush(QColor(115,26,21)))
             self.ui.tableWidget.setItem(counterRow, 0, it)
             # Prizes
-            it = QTableWidgetItem(item["prize"])
+            it = QTableWidgetItem(str(item["prize"]))
             it.setForeground(QBrush(QColor(245,216,25)))
             self.ui.tableWidget.setItem(counterRow, 1, it)
             # Url
-            it = QTableWidgetItem(item["url"])
+            it = QTableWidgetItem(str(item["url"]))
             it.setForeground(QBrush(QColor(174,174,174)))
             self.ui.tableWidget.setItem(counterRow, 2, it)
             # Data tournament
-            it = QTableWidgetItem(item["date_tournament"])
+            it = QTableWidgetItem(str(item["date_tournament"]))
             it.setForeground(QBrush(QColor(220, 220, 220)))
             self.ui.tableWidget.setItem(counterRow, 3, it)
             # Confirmed
-            it = QTableWidgetItem(item["confirmed"])
+            it = QTableWidgetItem(str(item["confirmed"]))
             it.setForeground(QBrush(QColor(46,165,223)))
             self.ui.tableWidget.setItem(counterRow, 4, it)
             # Server
-            it = QTableWidgetItem(item["server"])
+            it = QTableWidgetItem(str(item["server"]))
             it.setForeground(QBrush(QColor(220, 220, 220)))
             self.ui.tableWidget.setItem(counterRow, 5, it)
+
+            # if (str(item["title"]) == ""):
+            #     print("title error ", str(item["title"]))
+            #
+            # if (str(item["prize"]) == ""):
+            #     print("prize error ", str(item["prize"]))
+            #
+            # if (str(item["url"]) == ""):
+            #     print("url error ", str(item["url"]))
+            #
+            # if (str(item["date_tournament"]) == ""):
+            #     print("date_tournament error ", str(item["date_tournament"]))
+            #
+            # if (str(item["confirmed"]) == ""):
+            #     print("confirmed error ", str(item["confirmed"]))
+            #
+            # if (str(item["server"]) == ""):
+            #     print("server error ", str(item["server"]))
+
 
             counterRow += 1
 
@@ -272,16 +302,18 @@ class TournamentsWotCheck(QtWidgets.QMainWindow):
 
         try:
             threadRun.start()
+            try:
+                threadRun.join()
+            except:
+                print("threadRun error")
         except:
             print("threadRun error")
-        try:
-            threadRun.join()
-        except:
-            "threadRun error"
+
 
         self.fillTableAll(self.listHandeledData)
 
 app = QtWidgets.QApplication([])
 application = TournamentsWotCheck()
+# application.setWindowFlag(QtCore.Qt.FramelessWindowHint) убирает рамку всю
 application.show()
 sys.exit(app.exec())
